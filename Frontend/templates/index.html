@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Orchestrator</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="container">
+    <div class="app-header">
+        <div class="logo">
+            <h1>Job Orchestrator</h1>
+        </div>
+        <div class="nav-tabs">
+            <button class="nav-btn active" data-page="jobs">Jobs</button>
+            <button class="nav-btn" data-page="submit">Submit job</button>
+            <button class="nav-btn">Dashboard</button>
+        </div>
+    </div>
+
+    <div id="jobsPage" class="page active-page">
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Job history</h2>
+            <div class="jobs-table-wrapper">
+                <table class="jobs-table">
+                    <thead>
+                        <tr><th>Job Label</th><th>Executable</th><th>Status</th><th>Submitted</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody id="jobsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="submitPage" class="page">
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Upload new job</h2>
+            <form id="submitJobForm">
+                <div class="form-group">
+                    <label>Executable file</label>
+                    <input type="file" id="executableFile" accept="*/*" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Additional files (optional)</label>
+                    <input type="file" id="additionalFiles" multiple>
+                    <div id="additionalFileList" class="file-list" style="display: none;"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Job label</label>
+                    <input type="text" id="jobLabel" required>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit job</button>
+            </form>
+            <div id="submitFeedback" style="margin-top: 1rem; font-size: 0.85rem; color: #B0B0B0;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="logModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <span>Job Logs</span>
+            <button class="close-modal" id="closeModalBtn">&times;</button>
+        </div>
+        <div class="modal-body" id="logContent">
+            Loading logs...
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

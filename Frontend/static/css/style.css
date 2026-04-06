@@ -1,0 +1,288 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f4f7fc;
+    color: #1a2c3e;
+    padding: 2rem 1.5rem;
+}
+
+.container {
+    max-width: 1300px;
+    margin: 0 auto;
+}
+
+/* header + nav */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid #cbdbe2;
+    padding-bottom: 1rem;
+}
+
+.logo h1 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    letter-spacing: -0.3px;
+    background: #0e5c79;
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+}
+
+.logo p {
+    font-size: 0.8rem;
+    color: #4a627a;
+}
+
+.nav-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: #eef2f5;
+    padding: 0.3rem;
+    border-radius: 3rem;
+}
+
+.nav-btn {
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    border-radius: 2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #2c4c6c;
+}
+
+.nav-btn.active {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    color: #1f6e8c;
+}
+
+.nav-btn:hover:not(.active) {
+    background: #e0e8ef;
+}
+
+/* card style */
+.card {
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.02), 0 2px 6px rgba(0,0,0,0.05);
+    padding: 1.8rem;
+    margin-bottom: 2rem;
+    transition: all 0.1s;
+}
+
+.page {
+    display: none;
+    animation: fade 0.25s ease;
+}
+
+.page.active-page {
+    display: block;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(5px);}
+    to { opacity: 1; transform: translateY(0);}
+}
+
+/* jobs table */
+.jobs-table-wrapper {
+    overflow-x: auto;
+}
+
+.jobs-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.jobs-table th {
+    text-align: left;
+    padding: 1rem 0.5rem 0.8rem 0.5rem;
+    color: #4b6f8c;
+    font-weight: 600;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.jobs-table td {
+    padding: 0.9rem 0.5rem;
+    border-bottom: 1px solid #edf2f7;
+    vertical-align: middle;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #eef2ff;
+    color: #1f4f6e;
+}
+
+.status-badge.completed { background: #e0f2e9; color: #1f6e4a; }
+.status-badge.pending { background: #fff0db; color: #b45f1b; }
+.status-badge.running { background: #e1f0fe; color: #0e6b8c; }
+.status-badge.failed { background: #ffe6e5; color: #b91c1c; }
+
+.action-buttons {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0.3rem 0.8rem;
+    border-radius: 30px;
+    transition: 0.1s;
+    background: #f0f4f9;
+    color: #2c5a74;
+}
+
+.btn-icon:hover {
+    background: #e2eaf1;
+}
+
+.btn-danger {
+    color: #b33;
+}
+
+/* submit form */
+.form-group {
+    margin-bottom: 1.6rem;
+}
+
+label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #1f4a6e;
+}
+
+input[type="file"], input[type="text"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 1rem;
+    font-size: 0.9rem;
+    background: #fefefe;
+    transition: 0.2s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #2c8cae;
+    box-shadow: 0 0 0 3px rgba(31,110,140,0.2);
+}
+
+.file-list {
+    background: #f8fafc;
+    border-radius: 1rem;
+    padding: 1rem;
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    border: 1px dashed #bfd9e8;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid #e2edf2;
+}
+
+.btn-submit {
+    background: #1f6e8c;
+    border: none;
+    padding: 0.8rem 2rem;
+    border-radius: 2rem;
+    font-weight: 600;
+    font-size: 1rem;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.btn-submit:hover {
+    background: #0e5c79;
+    transform: translateY(-1px);
+}
+
+/* modal for logs */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    max-width: 650px;
+    width: 90%;
+    border-radius: 1.5rem;
+    padding: 1.8rem;
+    box-shadow: 0 25px 40px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    font-size: 1.3rem;
+}
+
+.modal-body {
+    background: #f1f5f9;
+    border-radius: 1rem;
+    padding: 1rem;
+    font-family: monospace;
+    font-size: 0.8rem;
+    white-space: pre-wrap;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    cursor: pointer;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 2.5rem;
+    color: #6c8eaa;
+}
+
+hr {
+    margin: 1rem 0;
+}
+
+@media (max-width: 720px) {
+    body { padding: 1rem; }
+    .nav-btn { padding: 0.4rem 1rem; font-size: 0.85rem; }
+    .action-buttons { gap: 0.3rem; }
+}
