@@ -1,0 +1,38 @@
+{
+  "_format_version": "3.0",
+  "services": [
+    {
+      "name": "auth_service",
+      "url": "http://auth:5000",
+      "routes": [
+        {
+          "name": "auth_route",
+          "paths": ["/api/auth"],
+          "strip_path": true
+        }
+      ]
+    },
+    {
+      "name": "job_api_service",
+      "url": "http://jobapi:5000",
+      "routes": [
+        {
+          "name": "job_route",
+          "paths": ["/api/service"],
+          "strip_path": true
+        }
+      ]
+    },
+    {
+      "name": "frontend_service",
+      "url": "http://frontend:5000",
+      "routes": [
+        {
+          "name": "frontend_route",
+          "paths": ["/"],
+          "strip_path": false
+        }
+      ]
+    }
+  ]
+}

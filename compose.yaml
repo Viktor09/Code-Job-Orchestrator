@@ -1,14 +1,64 @@
-version: '3.8'
-
 services:
   frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
     image: frontend_app:latest
-    ports:
-      - "5000:5000"
     networks:
       - frontend_network
-    deploy:
-      replicas: 1
+
+  auth:
+    build:
+      context: ./Authentication
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - frontend_network
+
+  persistence:
+    build:
+      context: ./PersistenceService
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - frontend_network
+  
+  jobapi:
+    build:
+      context: ./JobAPIService
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - persistence
+      - redis
+    networks:
+      - frontend_network
+
+  worker:
+    build:
+      context: ./WorkerService
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - persistence
+      - redis
+    networks:
+      - frontend_network
+  
+  redis:
+    image: redis:7
+    networks:
+      - frontend_network
 
   kong:
     image: kong:3.4
@@ -17,40 +67,39 @@ services:
       KONG_DECLARATIVE_CONFIG: /usr/local/kong/declarative/kong.json
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
       KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
     volumes:
-      - ./Frontend/kong.json:/usr/local/kong/declarative/kong.json
+      - ./Kong/kong.json:/usr/local/kong/declarative/kong.json:ro
     ports:
       - "8000:8000"
+      - "8001:8001"
+    depends_on:
+      - frontend
+      - auth
+      - jobapi
     networks:
       - frontend_network
-    deploy:
-      replicas: 1
 
   portainer:
     image: portainer/portainer-ce:latest
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-      - portainer_data:/data
     ports:
       - "9000:9000"
+    volumes:
+      - portainer_data:/data
     networks:
       - frontend_network
-    deploy:
-      placement:
-        constraints:
-          - node.role == manager
 
   prometheus:
     image: prom/prometheus:latest
     volumes:
-      - ./Monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml
+      - ./Monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
     ports:
       - "9090:9090"
     networks:
       - monitoring_network
-    deploy:
-      replicas: 1
 
   grafana:
     image: grafana/grafana:latest
@@ -58,15 +107,38 @@ services:
       - "3000:3000"
     networks:
       - monitoring_network
-    deploy:
-      replicas: 1
+
+  postgres:
+    image: postgres:15
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - frontend_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+  
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    networks:
+      - frontend_network
 
 networks:
   frontend_network:
-    driver: overlay
+    driver: bridge
   monitoring_network:
-    driver: overlay
-  
+    driver: bridge
 
 volumes:
   portainer_data:
+  postgres_data:
