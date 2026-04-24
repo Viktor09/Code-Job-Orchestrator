@@ -1,4 +1,4 @@
-\# Changelog
+# Changelog
 
 
 
@@ -18,23 +18,23 @@ Mandescu Victor-Ioan 342C4
 
 Pasca Robert-Paul 342C4
 
-\---
+---
 
 
 
-\## \[Unreleased]
+## \[Unreleased]
 
 
 
-\### Added
+### Added
 
-\- Ongoing improvements and bug fixes
+- Ongoing improvements and bug fixes
 
 
 
-\### Planned
+### Planned
 
-\- Docker Swarm deployment:
+- Docker Swarm deployment:
 
 &#x20; - Convert Docker Compose setup to Swarm stack
 
@@ -42,7 +42,7 @@ Pasca Robert-Paul 342C4
 
 
 
-\- CI/CD pipeline:
+- CI/CD pipeline:
 
 &#x20; - Automated build and deployment using GitLab CI/CD (or similar)
 
@@ -52,7 +52,7 @@ Pasca Robert-Paul 342C4
 
 
 
-\- Frontend integration improvements:
+- Frontend integration improvements:
 
 &#x20; - Full integration with backend services through Kong
 
@@ -60,7 +60,7 @@ Pasca Robert-Paul 342C4
 
 
 
-\- Monitoring enhancements:
+- Monitoring enhancements:
 
 &#x20; - Configure Prometheus to collect metrics from services
 
@@ -74,7 +74,7 @@ Pasca Robert-Paul 342C4
 
 
 
-\- Observability improvements:
+- Observability improvements:
 
 &#x20; - Add centralized logging across services
 
@@ -82,17 +82,17 @@ Pasca Robert-Paul 342C4
 
 
 
-\---
+---
 
 
 
-\## \[0.2.0] - 2026-04-22
+## \[0.2.0] - 2026-04-22
 
 
 
-\### Added
+### Added
 
-\- Implemented Worker Service:
+- Implemented Worker Service:
 
 &#x20; - Consumes jobs from Redis queue
 
@@ -102,11 +102,11 @@ Pasca Robert-Paul 342C4
 
 
 
-\- Added Redis for asynchronous job queue
+- Added Redis for asynchronous job queue
 
 
 
-\- Integrated all services through Kong API Gateway:
+- Integrated all services through Kong API Gateway:
 
 &#x20; - `/api/auth` → Authentication Service
 
@@ -116,43 +116,43 @@ Pasca Robert-Paul 342C4
 
 
 
-\---
+---
 
 
 
-\### Changed
+### Changed
 
-\- Refactored service communication to use internal Docker networking
+- Refactored service communication to use internal Docker networking
 
-\- Improved worker execution logic and logging
-
-
-
-\---
+- Improved worker execution logic and logging
 
 
 
-\### Fixed
-
-\- Fixed worker not processing jobs due to incorrect endpoint paths
-
-\- Fixed argument passing issues to job scripts
-
-\- Fixed initial request latency
+---
 
 
 
-\---
+### Fixed
+
+- Fixed worker not processing jobs due to incorrect endpoint paths
+
+- Fixed argument passing issues to job scripts
+
+- Fixed initial request latency
 
 
 
-\## \[0.1.3] - 2026-04-19
+---
 
 
 
-\### Added
+## \[0.1.3] - 2026-04-19
 
-\- Implemented Persistence Service:
+
+
+### Added
+
+- Implemented Persistence Service:
 
 &#x20; - PostgreSQL integration
 
@@ -162,29 +162,29 @@ Pasca Robert-Paul 342C4
 
 
 
-\---
+---
 
 
 
-\### Changed
+### Changed
 
-\- Standardized API routes using `/persistence/...`
+- Standardized API routes using `/persistence/...`
 
-\- Improved database schema and job state handling
-
-
-
-\---
+- Improved database schema and job state handling
 
 
 
-\## \[0.1.2] - 2026-04-16
+---
 
 
 
-\### Added
+## \[0.1.2] - 2026-04-16
 
-\- Implemented Job API Service:
+
+
+### Added
+
+- Implemented Job API Service:
 
 &#x20; - Create, cancel, retry, delete jobs
 
@@ -196,29 +196,29 @@ Pasca Robert-Paul 342C4
 
 
 
-\---
+---
 
 
 
-\### Changed
+### Changed
 
-\- Improved API structure and endpoint consistency
+- Improved API structure and endpoint consistency
 
-\- Cleaned up environment variable configuration
-
-
-
-\---
+- Cleaned up environment variable configuration
 
 
 
-\## \[0.1.1] - 2026-04-13
+---
 
 
 
-\### Added
+## \[0.1.1] - 2026-04-13
 
-\- Implemented Authentication Service:
+
+
+### Added
+
+- Implemented Authentication Service:
 
 &#x20; - User registration and login
 
@@ -228,31 +228,31 @@ Pasca Robert-Paul 342C4
 
 
 
-\---
+---
 
 
 
-\## \[0.1.0] - 2026-04-06
+## \[0.1.0] - 2026-04-06
 
 
 
-\### Added
+### Added
 
-\- Initial version of frontend:
+- Initial version of frontend:
 
 &#x20; - Minimal configuration with Flask and HTML/CSS/JS
 
 
 
-\- Connected frontend to Kong API Gateway for job management
+- Connected frontend to Kong API Gateway for job management
 
 
 
-\- All services deployed and managed via Portainer
+- All services deployed and managed via Portainer
 
 
 
-\- Added monitoring stack:
+- Added monitoring stack:
 
 &#x20; - Prometheus
 
