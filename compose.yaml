@@ -4,6 +4,12 @@ services:
       context: ./Frontend
       dockerfile: Dockerfile
     image: frontend_app:latest
+    env_file:
+      - .env
+    ports:
+      - "5000:5000"
+    volumes:
+      - shared_jobs_data:/shared/jobs
     networks:
       - frontend_network
 
@@ -11,11 +17,11 @@ services:
     build:
       context: ./Authentication
       dockerfile: Dockerfile
+    image: auth_service:latest
     env_file:
       - .env
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     networks:
       - frontend_network
 
@@ -23,11 +29,11 @@ services:
     build:
       context: ./PersistenceService
       dockerfile: Dockerfile
+    image: persistence_service:latest
     env_file:
       - .env
     depends_on:
-      postgres:
-        condition: service_healthy
+      - postgres
     networks:
       - frontend_network
   
@@ -35,6 +41,7 @@ services:
     build:
       context: ./JobAPIService
       dockerfile: Dockerfile
+    image: job_api_service:latest
     env_file:
       - .env
     depends_on:
@@ -47,11 +54,14 @@ services:
     build:
       context: ./WorkerService
       dockerfile: Dockerfile
+    image: worker_service:latest
     env_file:
       - .env
     depends_on:
       - persistence
       - redis
+    volumes:
+      - shared_jobs_data:/shared/jobs
     networks:
       - frontend_network
   
@@ -95,16 +105,19 @@ services:
   prometheus:
     image: prom/prometheus:latest
     volumes:
-      - ./Monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - ./Monitoring/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
     ports:
       - "9090:9090"
     networks:
+      - frontend_network
       - monitoring_network
 
   grafana:
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
     networks:
       - monitoring_network
 
@@ -124,10 +137,8 @@ services:
   
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin
-    environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    env_file:
+      - .env
     ports:
       - "5050:80"
     networks:
@@ -135,10 +146,12 @@ services:
 
 networks:
   frontend_network:
-    driver: bridge
+    driver: overlay
   monitoring_network:
-    driver: bridge
+    driver: overlay
 
 volumes:
   portainer_data:
   postgres_data:
+  shared_jobs_data:
+  grafana_data:

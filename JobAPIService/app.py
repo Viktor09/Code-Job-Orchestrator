@@ -1,10 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response, g
 import os
 import jwt
 import requests
 import redis
 import json
+import time
 from functools import wraps
+from prometheus_client import Counter, Gauge, Histogram, generate_latest, CONTENT_TYPE_LATEST
 
 app = Flask(__name__)
 
@@ -17,6 +19,41 @@ REDIS_PORT = int(os.getenv("REDIS_PORT"))
 JOB_QUEUE_NAME = os.getenv("JOB_QUEUE_NAME")
 
 redis_client = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
+
+HTTP_REQUESTS_TOTAL = Counter(
+    "jobapi_http_requests_total",
+    "Total HTTP requests handled by JobAPI",
+    ["method", "route", "status_code"],
+)
+
+JOBS_CREATED_TOTAL = Counter(
+    "jobapi_jobs_created_total",
+    "Total jobs successfully created",
+)
+
+JOBS_QUEUED_TOTAL = Counter(
+    "jobapi_jobs_queued_total",
+    "Total jobs successfully queued in Redis",
+)
+
+JOB_QUEUE_DEPTH = Gauge(
+    "jobapi_job_queue_depth",
+    "Current number of jobs waiting in Redis queue",
+)
+
+
+@app.before_request
+def _before_request_metrics():
+    g._request_start_time = time.time()
+
+
+@app.after_request
+def _after_request_metrics(response):
+    route = request.url_rule.rule if request.url_rule else request.path
+    if route != "/metrics":
+        duration = time.time() - getattr(g, "_request_start_time", time.time())
+        HTTP_REQUESTS_TOTAL.labels(request.method, route, str(response.status_code)).inc()
+    return response
 
 def token_required(f):
     @wraps(f)
@@ -54,6 +91,16 @@ def token_required(f):
 def get_job_from_persistence(job_id):
     return requests.get(f"{PERSISTENCE_BASE_URL}/persistence/jobs/{job_id}")
 
+
+@app.route("/metrics", methods=["GET"])
+def metrics():
+    try:
+        JOB_QUEUE_DEPTH.set(redis_client.llen(JOB_QUEUE_NAME))
+    except Exception:
+        pass
+
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
+
 @app.route("/jobs", methods=["POST"])
 @token_required
 def create_job():
@@ -80,11 +127,15 @@ def create_job():
 
     if response.status_code != 201:
         return jsonify(response.json()), response.status_code
+
+    JOBS_CREATED_TOTAL.inc()
     
     queue_payload = {"job_id": response.json()["job"]["job_id"]}
 
     try:
         redis_client.rpush(JOB_QUEUE_NAME, json.dumps(queue_payload))
+        JOBS_QUEUED_TOTAL.inc()
+        JOB_QUEUE_DEPTH.set(redis_client.llen(JOB_QUEUE_NAME))
     except Exception as e:
         return jsonify({"error": f"Redis unavailable: {str(e)}"}), 500
 

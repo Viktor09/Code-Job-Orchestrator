@@ -174,7 +174,7 @@ label {
     color: #1f4a6e;
 }
 
-input[type="file"], input[type="text"] {
+input[type="file"], input[type="text"], input[type="email"], input[type="password"] {
     width: 100%;
     padding: 0.8rem 1rem;
     border: 1px solid #cbd5e1;
@@ -204,6 +204,40 @@ input:focus {
     justify-content: space-between;
     padding: 0.3rem 0;
     border-bottom: 1px solid #e2edf2;
+}
+
+/* auth pages */
+.auth-card {
+    max-width: 420px;
+    margin: 4rem auto;
+}
+
+.auth-title {
+    margin-bottom: 1rem;
+}
+
+.auth-feedback {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.auth-feedback-success {
+    color: #1f6e4a;
+}
+
+.auth-feedback-error {
+    color: #b33;
+}
+
+.auth-switch {
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: #4a627a;
+}
+
+.auth-link {
+    color: #1f6e8c;
+    font-weight: 600;
 }
 
 .btn-submit {

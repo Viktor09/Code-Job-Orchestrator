@@ -1,4 +1,5 @@
 let jobs = [];
+let jobsRefreshTimer = null;
 
 async function loadJobs() {
     const response = await fetch('/api/jobs');
@@ -95,7 +96,17 @@ function switchPage(pageId) {
         }
     });
     if (pageId === 'jobs') {
-        renderJobsTable();
+        loadJobs().catch(() => {
+            renderJobsTable();
+        });
+        if (!jobsRefreshTimer) {
+            jobsRefreshTimer = setInterval(() => {
+                loadJobs().catch(() => {});
+            }, 5000);
+        }
+    } else if (jobsRefreshTimer) {
+        clearInterval(jobsRefreshTimer);
+        jobsRefreshTimer = null;
     }
 }
 
@@ -107,10 +118,22 @@ document.addEventListener('DOMContentLoaded', () => {
     loadJobs().catch((err) => {
         document.getElementById('submitFeedback').innerHTML = `<span style="color:#b33;">${err.message}</span>`;
     });
+    jobsRefreshTimer = setInterval(() => {
+        loadJobs().catch(() => {});
+    }, 5000);
     
     document.querySelectorAll('.nav-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            switchPage(btn.getAttribute('data-page'));
+            const externalUrl = btn.getAttribute('data-url');
+            if (externalUrl) {
+                window.open(externalUrl, '_blank', 'noopener');
+                return;
+            }
+
+            const pageId = btn.getAttribute('data-page');
+            if (pageId) {
+                switchPage(pageId);
+            }
         });
     });
     
