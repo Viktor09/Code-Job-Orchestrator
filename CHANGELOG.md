@@ -12,9 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- Docker Swarm deployment:
-    - Enable service scaling and orchestration
-
 - CI/CD pipeline:
     - Automated build and deployment using GitLab CI/CD (or similar)
     - Build Docker images and push to registry
@@ -27,6 +24,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ---
+## \[0.4.0] - 2026-04-26
+### Changed
+- Docker Swarm deployment:
+    - Enable service scaling and orchestration
+
 ## \[0.3.0] - 2026-04-25
 ### Added
 

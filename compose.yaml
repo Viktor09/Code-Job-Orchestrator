@@ -1,60 +1,65 @@
 services:
   frontend:
-    build:
-      context: ./Frontend
-      dockerfile: Dockerfile
-    image: frontend_app:latest
+    image: vick09/code-job-orchestrator:frontend
     env_file:
       - .env
     ports:
       - "5000:5000"
     volumes:
       - shared_jobs_data:/shared/jobs
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
+      - public_network
 
   auth:
-    build:
-      context: ./Authentication
-      dockerfile: Dockerfile
-    image: auth_service:latest
+    image: vick09/code-job-orchestrator:auth
     env_file:
       - .env
     depends_on:
       - postgres
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
+      - public_network
+      - private_network
 
   persistence:
-    build:
-      context: ./PersistenceService
-      dockerfile: Dockerfile
-    image: persistence_service:latest
+    image: vick09/code-job-orchestrator:persistence
     env_file:
       - .env
     depends_on:
       - postgres
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
+      - private_network
+      - database_network
   
   jobapi:
-    build:
-      context: ./JobAPIService
-      dockerfile: Dockerfile
-    image: job_api_service:latest
+    image: vick09/code-job-orchestrator:api
     env_file:
       - .env
     depends_on:
       - persistence
       - redis
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
+      - public_network
+      - private_network
+      - database_network
 
   worker:
-    build:
-      context: ./WorkerService
-      dockerfile: Dockerfile
-    image: worker_service:latest
+    image: vick09/code-job-orchestrator:worker
     env_file:
       - .env
     depends_on:
@@ -63,12 +68,13 @@ services:
     volumes:
       - shared_jobs_data:/shared/jobs
     networks:
-      - frontend_network
+      - private_network
+      - database_network
   
   redis:
     image: redis:7
     networks:
-      - frontend_network
+      - private_network
 
   kong:
     image: kong:3.4
@@ -90,8 +96,12 @@ services:
       - frontend
       - auth
       - jobapi
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
+      - public_network
 
   portainer:
     image: portainer/portainer-ce:latest
@@ -99,8 +109,13 @@ services:
       - "9000:9000"
     volumes:
       - portainer_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      mode: global
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
+      - public_network
 
   prometheus:
     image: prom/prometheus:latest
@@ -108,9 +123,12 @@ services:
       - ./Monitoring/prometheus.yaml:/etc/prometheus/prometheus.yml:ro
     ports:
       - "9090:9090"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
-      - monitoring_network
+      - public_network
 
   grafana:
     image: grafana/grafana:latest
@@ -118,8 +136,12 @@ services:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - monitoring_network
+      - public_network
 
   postgres:
     image: postgres:15
@@ -127,8 +149,13 @@ services:
       - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
+      - private_network
+      - database_network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
       interval: 5s
@@ -141,17 +168,30 @@ services:
       - .env
     ports:
       - "5050:80"
+    deploy:
+      replicas: 1
+      placement:
+        constraints: [node.role == manager]
     networks:
-      - frontend_network
+      - private_network
 
 networks:
-  frontend_network:
+  public_network:
     driver: overlay
-  monitoring_network:
+    attachable: true
+  private_network:
     driver: overlay
+    internal: true
+  database_network:
+    driver: overlay
+    internal: true
 
 volumes:
   portainer_data:
+    driver: local
   postgres_data:
+    driver: local
   shared_jobs_data:
+    driver: local
   grafana_data:
+    driver: local
