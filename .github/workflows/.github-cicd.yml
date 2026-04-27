@@ -43,6 +43,32 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Create .env file from secrets
+        shell: powershell
+        run: |
+          @"
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          DB_HOST=${{ secrets.DB_HOST }}
+          DB_PORT=${{ secrets.DB_PORT }}
+          DB_NAME=${{ secrets.DB_NAME }}
+          DB_USER=${{ secrets.DB_USER }}
+          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+          PERSISTENCE_BASE_URL=${{ secrets.PERSISTENCE_BASE_URL }}
+          REDIS_HOST=${{ secrets.REDIS_HOST }}
+          REDIS_PORT=${{ secrets.REDIS_PORT }}
+          JOB_QUEUE_NAME=${{ secrets.JOB_QUEUE_NAME }}
+          PGADMIN_DEFAULT_EMAIL=${{ secrets.PGADMIN_DEFAULT_EMAIL }}
+          PGADMIN_DEFAULT_PASSWORD=${{ secrets.PGADMIN_DEFAULT_PASSWORD }}
+          FLASK_SECRET_KEY=${{ secrets.FLASK_SECRET_KEY }}
+          KONG_AUTH_LOGIN_URL=${{ secrets.KONG_AUTH_LOGIN_URL }}
+          KONG_AUTH_REGISTER_URL=${{ secrets.KONG_AUTH_REGISTER_URL }}
+          JOB_API_URL=${{ secrets.JOB_API_URL }}
+          UPLOAD_BASE_DIR=${{ secrets.UPLOAD_BASE_DIR }}
+          "@ | Out-File -FilePath .env -Encoding utf8
+
       - name: Pull images
         run: |
           docker pull vick09/code-job-orchestrator:frontend
@@ -50,6 +76,11 @@ jobs:
           docker pull vick09/code-job-orchestrator:persistence
           docker pull vick09/code-job-orchestrator:api
           docker pull vick09/code-job-orchestrator:worker
+
+      - name: Initialize Docker Swarm
+        run: |
+          docker swarm init
+        continue-on-error: true
 
       - name: Deploy stack
         run: docker stack deploy -c compose.yaml code_job_orchestrator --with-registry-auth
