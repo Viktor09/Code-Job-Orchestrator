@@ -12,11 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- CI/CD pipeline:
-    - Automated build and deployment using GitLab CI/CD (or similar)
-    - Build Docker images and push to registry
-    - Automatic deployment to cluster
-
 - Observability improvements:
     - Add centralized logging across services
     - Improve visibility of worker execution and errors
@@ -24,6 +19,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ---
+## \[0.5.0] - 2026-04-27
+### Added
+- CI/CD pipeline:
+    - Automated build and deployment using GitHub Actions
+    - Build Docker images and push to registry
+    - Automatic deployment to cluster
+
 ## \[0.4.0] - 2026-04-26
 ### Changed
 - Docker Swarm deployment:
