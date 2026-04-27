@@ -25,6 +25,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Automated build and deployment using GitHub Actions
     - Build Docker images and push to registry
     - Automatic deployment to cluster
+- Grafana exported dashboard
+### Fixed
+- Frontend was not properly returning errors at login and registration endpoints
 
 ## \[0.4.0] - 2026-04-26
 ### Changed

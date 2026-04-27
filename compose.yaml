@@ -136,6 +136,8 @@ services:
       - "3000:3000"
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./Monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./Monitoring/grafana/dashboards:/etc/grafana/dashboards:ro
     deploy:
       replicas: 1
       placement:
