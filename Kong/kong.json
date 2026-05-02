@@ -1,5 +1,13 @@
 {
   "_format_version": "3.0",
+  "plugins": [
+    {
+      "name": "prometheus",
+      "config": {
+        "per_consumer": true
+      }
+    }
+  ],
   "services": [
     {
       "name": "auth_service",

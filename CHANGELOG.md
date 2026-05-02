@@ -28,6 +28,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Grafana exported dashboard
 ### Fixed
 - Frontend was not properly returning errors at login and registration endpoints
+### Changed
+- Updated Grafana dashboards to include metrics from Kong
 
 ## \[0.4.0] - 2026-04-26
 ### Changed
